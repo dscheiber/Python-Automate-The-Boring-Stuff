@@ -35,18 +35,30 @@ gameBoardTest1 = {
     'bot-right': 'O'
 }
 
+##test condition, bot cannot acquire middle
 gameBoardTest2 = {
     'top-left': '_',
     'top-mid': '_',
     'top-right': '_',
     'mid-left': '_',
-    'mid-mid': '_',
+    'mid-mid': 'X',
     'mid-right': '_',
     'bot-left': '_',
     'bot-mid': '_',
     'bot-right': '_'
 }
-
+##test condition, bot has options after acquiring middle
+gameBoardTest3 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': 'O',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
 
 
 
@@ -166,6 +178,13 @@ def AIHardTurn(gameBoard):
                     nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
                     print(nextMove)
                     return nextMove
+        elif scoreAI == 1:
+            for placement in range(len(scoreString)):
+                if scoreString[placement] == "_" and (gameBoardTranslation[location][placement] == 'top-left' or gameBoardTranslation[location][placement] == 'top-right' or gameBoardTranslation[location][placement] == 'bot-left' or gameBoardTranslation[location][placement] == 'bot-right'):
+                    nextMoveList.append(gameBoardTranslation[location][placement])
+            nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
+            print(nextMove)
+            return nextMove
     if len(nextMove) == 0:
         if gameBoard['mid-mid'] == "_":
             nextMove = "mid-mid"
@@ -184,7 +203,7 @@ def AIHardTurn(gameBoard):
     return nextMove
             
 
-AIHardTurn(gameBoard)
+AIHardTurn(gameBoardTest3)
 
 
 # ##game start
