@@ -22,82 +22,6 @@ gameBoard = {
     'bot-mid': '_',
     'bot-right': '_'
 }
-##test condition, bot 1 away from winning
-gameBoardTest1 = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': '_',
-    'mid-mid': '_',
-    'mid-right': 'O',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': 'O'
-}
-
-##test condition, bot cannot acquire middle
-gameBoardTest2 = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': '_',
-    'mid-mid': 'X',
-    'mid-right': '_',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': '_'
-}
-##test condition, bot has options after acquiring middle
-gameBoardTest3 = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': '_',
-    'mid-mid': 'O',
-    'mid-right': '_',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': '_'
-}
-
-##test condition, bot has a non-middle single space
-gameBoardTest4 = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': '_',
-    'mid-mid': '_',
-    'mid-right': '_',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': 'O'
-}
-
-##test condition, player is 1 away from winning
-gameBoardTest5 = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': 'X',
-    'mid-mid': 'X',
-    'mid-right': '_',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': '_'
-}
-
-##test condition, player is 1 away from winning in two ways
-gameBoardTest6 = {
-    'top-left': 'X',
-    'top-mid': '_',
-    'top-right': 'O',
-    'mid-left': '_',
-    'mid-mid': 'X',
-    'mid-right': 'X',
-    'bot-left': 'O',
-    'bot-mid': 'X',
-    'bot-right': 'O'
-}
 
 ##instructions for gameboard inputs
 gameBoardInstructions = {
@@ -112,23 +36,7 @@ gameBoardInstructions = {
     'bot-right': 'bot-right'
 }
 
-##blank gameboard
-gameBoardBlank = {
-    'top-left': '_',
-    'top-mid': '_',
-    'top-right': '_',
-    'mid-left': '_',
-    'mid-mid': '_',
-    'mid-right': '_',
-    'bot-left': '_',
-    'bot-mid': '_',
-    'bot-right': '_'
-}
-
-
-
-
-
+##reconciles gameboard vs placement indexes used for AI turns
 gameBoardTranslation = {
     'top-horizontal' : ['top-left', 'top-mid','top-right'],
     'mid-horizontal' : ['mid-left','mid-mid','mid-right'],
@@ -346,10 +254,6 @@ def gameLoop(gameBoard):
         display(gameBoard)
         scoring(gameBoard)            
 
-###test zone
-#AIHardTurn(gameBoardTest6)
-
-
 #game start
 
 print('Welcome to a cool game of tic tac toe made during my son\'s nap!')
@@ -360,3 +264,95 @@ print('Enter the below values to choose your squares. Good luck!')
 display(gameBoardInstructions)
 gameLoop(gameBoard)
 print('Thanks for playing.')
+
+
+###test gameBoards below for testing AI behavior
+##test condition, bot 1 away from winning
+gameBoardTest1 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': '_',
+    'mid-right': 'O',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': 'O'
+}
+
+##test condition, bot cannot acquire middle
+gameBoardTest2 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': 'X',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
+##test condition, bot has options after acquiring middle
+gameBoardTest3 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': 'O',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
+
+##test condition, bot has a non-middle single space
+gameBoardTest4 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': '_',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': 'O'
+}
+
+##test condition, player is 1 away from winning
+gameBoardTest5 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': 'X',
+    'mid-mid': 'X',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
+
+##test condition, player is 1 away from winning in two ways
+gameBoardTest6 = {
+    'top-left': 'X',
+    'top-mid': '_',
+    'top-right': 'O',
+    'mid-left': '_',
+    'mid-mid': 'X',
+    'mid-right': 'X',
+    'bot-left': 'O',
+    'bot-mid': 'X',
+    'bot-right': 'O'
+}
+
+##blank gameboard
+gameBoardBlank = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': '_',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
