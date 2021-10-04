@@ -5,8 +5,8 @@ import random
 
 gameOver = 0
 roundCount = 0
-playerTeam = "X"
-AITeam = "O"
+playerTeam = "unset"
+AITeam = "unset"
 turnOrder = []
 AIdifficulty = "normal"
 
@@ -60,6 +60,71 @@ gameBoardTest3 = {
     'bot-right': '_'
 }
 
+##test condition, bot has a non-middle single space
+gameBoardTest4 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': '_',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': 'O'
+}
+
+##test condition, player is 1 away from winning
+gameBoardTest5 = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': 'X',
+    'mid-mid': 'X',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
+
+##test condition, player is 1 away from winning in two ways
+gameBoardTest6 = {
+    'top-left': 'X',
+    'top-mid': '_',
+    'top-right': 'O',
+    'mid-left': '_',
+    'mid-mid': 'X',
+    'mid-right': 'X',
+    'bot-left': 'O',
+    'bot-mid': 'X',
+    'bot-right': 'O'
+}
+
+##instructions for gameboard inputs
+gameBoardInstructions = {
+    'top-left': 'top-left',
+    'top-mid': 'top-mid',
+    'top-right': 'top-right',
+    'mid-left': 'mid-left',
+    'mid-mid': 'mid-mid',
+    'mid-right': 'mid-right',
+    'bot-left': 'bot-left',
+    'bot-mid': 'bot-mid',
+    'bot-right': 'bot-right'
+}
+
+##blank gameboard
+gameBoardBlank = {
+    'top-left': '_',
+    'top-mid': '_',
+    'top-right': '_',
+    'mid-left': '_',
+    'mid-mid': '_',
+    'mid-right': '_',
+    'bot-left': '_',
+    'bot-mid': '_',
+    'bot-right': '_'
+}
+
 
 
 
@@ -82,6 +147,7 @@ def display(gameBoard):
 
 def scoring(gameBoard):
     global gameOver
+    filledConditions = 0
     placement = {}
     placement.update({'top-horizontal' : gameBoard['top-left']+gameBoard['top-mid']+gameBoard['top-right']})
     placement.update({'mid-horizontal' : gameBoard['mid-left']+gameBoard['mid-mid']+gameBoard['mid-right']})
@@ -91,17 +157,25 @@ def scoring(gameBoard):
     placement.update({'right-vertical' : gameBoard['top-right']+gameBoard['mid-right']+gameBoard['bot-right']})
     placement.update({'forward-slash' : gameBoard['bot-left']+gameBoard['mid-mid']+gameBoard['top-right']})
     placement.update({'backward-slash' : gameBoard['top-left']+gameBoard['mid-mid']+gameBoard['bot-right']})
-    print(placement)
     
     for scoreString in placement.values():
         scoreX = scoreString.count('X')
         scoreO = scoreString.count('O')
+        scoreUnderline = scoreString.count('_')
         if scoreX == 3:
             print('X wins!')
             gameOver = 1     
         elif scoreO == 3:
             print('O wins!')
             gameOver = 1
+        
+        ##end the game if the board fills
+        elif scoreUnderline == 0:
+            filledConditions += 1
+            if filledConditions == 8:
+                print('Tie game, everybody loses.')
+                gameOver = 1
+
 
             
 
@@ -124,13 +198,22 @@ def mark(gameBoard):
                 'bot-left', 'bot-mid', 'bot-right'.''')
 
 def AIturn(gameBoard):
-    print('Enemys turn.')
+    print('Enemy\'s', AIdifficulty, 'turn.')
     freeSpaces = []
-    for name, currentState in gameBoard.items():
-        if currentState == '_':
-            freeSpaces.append(name)
-    randomChoice = random.randint(0, len(freeSpaces)-1)
-    gameBoard[freeSpaces[randomChoice]] = AITeam
+    if AIdifficulty == "hard":
+        choice = AIHardTurn(gameBoard)
+        try:
+            gameBoard[choice] = AITeam
+        except:
+            print('error in hard turn')
+
+            gameBoard[freeSpaces[choice]] = AITeam
+    else:
+        for name, currentState in gameBoard.items():
+            if currentState == '_':
+                freeSpaces.append(name)
+        choice = random.randint(0, len(freeSpaces)-1)
+        gameBoard[freeSpaces[choice]] = AITeam
 
 def chooseSide():
     global playerTeam, AITeam
@@ -159,6 +242,7 @@ def AIHardTurn(gameBoard):
     placement = {}
     nextMove = ""
     nextMoveList = []
+    nextMoveListBlock = []
     placement.update({'top-horizontal' : gameBoard['top-left']+gameBoard['top-mid']+gameBoard['top-right']})
     placement.update({'mid-horizontal' : gameBoard['mid-left']+gameBoard['mid-mid']+gameBoard['mid-right']})
     placement.update({'bot-horizontal' : gameBoard['bot-left']+gameBoard['bot-mid']+gameBoard['bot-right']})
@@ -167,25 +251,42 @@ def AIHardTurn(gameBoard):
     placement.update({'right-vertical' : gameBoard['top-right']+gameBoard['mid-right']+gameBoard['bot-right']})
     placement.update({'forward-slash' : gameBoard['bot-left']+gameBoard['mid-mid']+gameBoard['top-right']})
     placement.update({'backward-slash' : gameBoard['top-left']+gameBoard['mid-mid']+gameBoard['bot-right']})
-    print(placement)
     
     for location, scoreString in placement.items():
         scoreAI = scoreString.count(AITeam)
-        if scoreAI == 2:
+        scorePlayer = scoreString.count(playerTeam)
+        scoreUnderline = scoreString.count('_')
+
+        ##bot 1 away from winning, functions to win
+        if scoreAI == 2 and scorePlayer == 0:
             for placement in range(len(scoreString)):
                 if scoreString[placement] == "_":
-                    nextMoveList.append(gameBoardTranslation[location][placement])
-                    nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
-                    print(nextMove)
+                    nextMove = gameBoardTranslation[location][placement]
                     return nextMove
-        elif scoreAI == 1:
+
+        ##player 1 away from winning, functions to block            
+        if scorePlayer == 2 and scoreUnderline == 1 and scoreAI == 0:
             for placement in range(len(scoreString)):
-                if scoreString[placement] == "_" and (gameBoardTranslation[location][placement] == 'top-left' or gameBoardTranslation[location][placement] == 'top-right' or gameBoardTranslation[location][placement] == 'bot-left' or gameBoardTranslation[location][placement] == 'bot-right'):
+                if scoreString[placement] == "_":
+                    nextMoveListBlock.append(gameBoardTranslation[location][placement])
+
+
+        ##2 away from winning; only 1 item placed but makes a meaningful move            
+        elif scoreAI == 1 and scoreUnderline > 0:
+            for placement in range(len(scoreString)):
+                if scoreString[placement] == "_" and (gameBoardTranslation[location][placement] == 'top-left' or gameBoardTranslation[location][placement] == 'top-right' or gameBoardTranslation[location][placement] == 'bot-left' or gameBoardTranslation[location][placement] == 'bot-right' or gameBoardTranslation[location][placement] == 'mid-mid'):
                     nextMoveList.append(gameBoardTranslation[location][placement])
-            nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
-            print(nextMove)
-            return nextMove
-    if len(nextMove) == 0:
+    
+    ## chooses between blocking moves or lesser move                    
+    if len(nextMoveListBlock) > 0:
+        nextMove = nextMoveListBlock[random.randint(0, len(nextMoveListBlock)-1)]
+        return nextMove
+    elif len(nextMoveList) > 0:
+        nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
+        return nextMove
+
+        ##first move, chooses only good spots
+    if scoreAI == 0 and (scorePlayer == 0 or scorePlayer == 1):
         if gameBoard['mid-mid'] == "_":
             nextMove = "mid-mid"
         if gameBoard['top-left'] == "_":
@@ -196,40 +297,66 @@ def AIHardTurn(gameBoard):
             nextMoveList.append('bot-left')
         if gameBoard['bot-right'] == "_":
             nextMoveList.append('bot-right')
-        print(nextMoveList)
-    if len(nextMove) == 0:
+    
+    if len(nextMoveList) > 0:
         nextMove = nextMoveList[random.randint(0, len(nextMoveList)-1)]
-    print(nextMove)
-    return nextMove
+        return nextMove
+    else:
+        freeSpaces = []
+        for name, currentState in gameBoard.items():
+            if currentState == '_':
+                freeSpaces.append(name)
+        nextMove = random.randint(0, len(freeSpaces)-1)
+        return nextMove
+
+def difficultySelect():
+    global AIdifficulty
+    difficultyUnselected = 0
+    while difficultyUnselected == 0:
+        difficultyChoice = input("Do you want to play on normal or hard? \n")
+        if difficultyChoice == "normal" or difficultyChoice == "hard":
+            difficultyUnselected = 1
+            AIdifficulty = difficultyChoice
+            return
+        else:
+            print('That is not a valid difficulty option.')
             
 
-AIHardTurn(gameBoardTest3)
+##main game loop
+def gameLoop(gameBoard):
+    roundCount = 0
+    while gameOver != 1:
+        roundCount += 1
+        print('Round',roundCount)
+
+        ##first turn of the round
+        if turnOrder[0] == 'Player':
+            mark(gameBoard)
+        else:
+            AIturn(gameBoard)
+        display(gameBoard)
+        scoring(gameBoard)
+        if gameOver == 1:
+            break
+        ##second turn of the round
+        if turnOrder[1] == 'Player':
+            mark(gameBoard)
+        else:
+            AIturn(gameBoard)
+        display(gameBoard)
+        scoring(gameBoard)            
+
+###test zone
+#AIHardTurn(gameBoardTest6)
 
 
-# ##game start
+#game start
 
-# print('Welcome to a cool game of tic tac toe made durinng my son\'s nap!')
-# chooseSide()
-# defineTurnOrder()
-# display(gameBoard)
-
-# ##main game loop
-# while gameOver != 1:
-#     roundCount += 1
-#     print('Round',roundCount)
-#     ##first turn of loop
-#     if turnOrder[0] == 'Player':
-#         mark(gameBoard)
-#     else:
-#         AIturn(gameBoard)
-#     display(gameBoard)
-#     scoring(gameBoard)
-#     ##second turn of loop
-#     if turnOrder[1] == 'Player':
-#         mark(gameBoard)
-#     else:
-#         AIturn(gameBoard)
-#     display(gameBoard)
-#     scoring(gameBoard)
-
-# print('Thanks for playing.')
+print('Welcome to a cool game of tic tac toe made during my son\'s nap!')
+chooseSide()
+difficultySelect()
+defineTurnOrder()
+print('Enter the below values to choose your squares. Good luck!')
+display(gameBoardInstructions)
+gameLoop(gameBoard)
+print('Thanks for playing.')
